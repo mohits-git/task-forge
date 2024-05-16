@@ -13,6 +13,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  AGENCY_OWNER
+  TEAM_MEMBER
+}
+
 model User {
   id        String   @id @default(uuid())
   name      String
@@ -21,9 +26,98 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   role      Role     @default(TEAM_MEMBER)
+
+  agencyId String?
+  Agency   Agency? @relation(fields: [agencyId], references: [id])
+
+  Permissions Permissions[]
+
+  Ticket      Ticket[]
+
+  @@index([agencyId])
 }
 
-enum Role {
-  AGENCY_OWNER
-  TEAM_MEMBER
+model Agency {
+  id          String       @id @default(uuid())
+  name        String
+  agencyLogo  String       @db.Text
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  Projects    Project[]
+  Invitations Invitation[]
+
+  team User[]
+}
+
+model Permissions {
+  id        String  @id @default(uuid())
+  email     String
+  User      User    @relation(fields: [email], references: [email], onDelete: Cascade)
+  projectId String
+  Project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  access    Boolean
+
+  @@index([projectId])
+  @@index([email])
+}
+
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  REVOKED
+}
+
+model Invitation {
+  id       String           @id @default(uuid())
+  email    String           @unique
+  agencyId String
+  Agency   Agency           @relation(fields: [agencyId], references: [id])
+  role     Role             @default(TEAM_MEMBER)
+  status   InvitationStatus @default(PENDING)
+
+  @@index([agencyId])
+}
+
+model Project {
+  id          String        @id @default(uuid())
+  name        String
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  Lane        Lane[]
+  Permissions Permissions[]
+  agencyId    String
+  Agency      Agency        @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+
+  @@index([agencyId])
+}
+
+model Lane {
+  id        String   @id @default(uuid())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  projectId String
+  Project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  Tickets   Ticket[]
+  order     Int      @default(0)
+
+  @@index([projectId])
+}
+
+model Ticket {
+  id          String   @id @default(uuid())
+  name        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  laneId      String
+  order       Int      @default(0)
+  Lane        Lane     @relation(fields: [laneId], references: [id], onDelete: Cascade)
+  value       String?  @db.VarChar(50)
+  description String?
+
+  assignedUserId String?
+  Assigned       User?   @relation(fields: [assignedUserId], references: [id], onDelete: SetNull)
+
+  @@index([laneId])
+  @@index([assignedUserId])
 }
