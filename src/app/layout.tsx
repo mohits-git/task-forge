@@ -4,7 +4,8 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { ClerkProvider } from "@clerk/nextjs";
 import { dark } from "@clerk/themes"
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from "@/providers/theme-provider";
+import ModalProvider from "@/providers/modal-provider";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -35,9 +36,11 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ClerkProvider appearance={{ baseTheme: dark }}>
-            {children}
-          </ClerkProvider>
+          <ModalProvider>
+            <ClerkProvider appearance={{ baseTheme: dark }}>
+              {children}
+            </ClerkProvider>
+          </ModalProvider>
         </ThemeProvider>
       </body>
     </html>
