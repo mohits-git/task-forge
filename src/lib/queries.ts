@@ -3,7 +3,7 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { db } from "./db";
 import { redirect } from "next/navigation";
-import { User } from "@prisma/client";
+import { Agency, User } from "@prisma/client";
 
 export const createTeamUser = async (user: User) => {
   if (user.role === "AGENCY_OWNER") return null;
@@ -79,4 +79,63 @@ export const getAuthUserDetails = async () => {
   });
 
   return userData;
+}
+
+export const deleteAgency = async (agencyId: string) => {
+  const response = await db.agency.delete({
+    where: { id: agencyId }
+  });
+
+  return response;
+}
+
+export const initUser = async (newUser: Partial<User>) => {
+  const user = await currentUser();
+  if (!user) return;
+
+  const userData = await db.user.upsert({
+    where: {
+      email: user.emailAddresses[0].emailAddress,
+    },
+    update: newUser,
+    create: {
+      id: user.id,
+      avatarUrl: user.imageUrl,
+      email: user.emailAddresses[0].emailAddress,
+      name: `${user.firstName} ${user.lastName}`,
+      role: newUser.role || "TEAM_MEMBER",
+    }
+  });
+
+  await clerkClient.users.updateUserMetadata(user.id, {
+    privateMetadata: {
+      role: newUser.role || "TEAM_MEMBER",
+    }
+  });
+
+  return userData;
+}
+
+export const upsertAgency = async (agency: Agency) => {
+  const user = await currentUser();
+  if(!user) return null;
+  try {
+    const agencyDetails = await db.agency.upsert({
+      where: {
+        id: agency.id,
+      },
+      update: agency,
+      create: {
+        team: {
+          connect: { email: user.emailAddresses[0].emailAddress },
+        },
+        ...agency,
+      }
+    });
+
+    return agencyDetails;
+
+  } catch (error) {
+    console.log(error);
+  }
 }
