@@ -1,3 +1,4 @@
+import AgencyDetails from "@/components/forms/agency-details";
 import Unauthorized from "@/components/global/unauthorized";
 import { getAuthUserDetails, verifyUserAndInvitation } from "@/lib/queries";
 import { redirect } from "next/navigation";
@@ -18,10 +19,9 @@ export default async function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-24">
-      <h1>Get Started</h1>
-      <h2>Create Your Agency</h2>
-      {/* TODO: Add agency form */}
-      {/* AgencyDetails */}
+      <div className="max-w-xl">
+        <AgencyDetails />
+      </div>
     </main>
   );
 }
