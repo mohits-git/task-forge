@@ -77,8 +77,8 @@ export default function AgencyDetails({ data }: Props) {
 
       });
 
-      if (data?.id) toast("Updated Agency")
-      else toast("Created agency");
+      if (data?.id) toast("Agency Updated")
+      else toast("Agency Created ");
 
       return router.refresh();
 
