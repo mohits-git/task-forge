@@ -3,7 +3,9 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { db } from "./db";
 import { redirect } from "next/navigation";
-import { Agency, User } from "@prisma/client";
+import { Agency, Project, User } from "@prisma/client";
+import { Omit } from "@prisma/client/runtime/library";
+import { access } from "fs";
 
 export const createTeamUser = async (user: User) => {
   if (user.role === "AGENCY_OWNER") return null;
@@ -134,6 +136,56 @@ export const upsertAgency = async (agency: Agency) => {
     });
 
     return agencyDetails;
+
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const deleteProject = async (projectId: string) => {
+  const user = await currentUser();
+  if(user?.privateMetadata.role !== "TEAM_OWNER") return null;
+  const response = await db.project.delete({ where: { id: projectId }});
+  return response;
+}
+
+export const upsertProject = async (project: Omit<Project, "agencyId">) => {
+  const user = await currentUser();
+  if(!user) return null;
+  try {
+    const userDetails = await db.user.findUnique({
+      where: { id: user.id }
+    });
+    if(!userDetails?.agencyId) return null;
+    const projectDetails = await db.project.upsert({
+      where: {
+        id: project.id,
+      },
+      update: project,
+      create: {
+        ...project,
+        agencyId: userDetails.agencyId,
+      }
+    });
+
+    const permissionExist = await db.permissions.findFirst({
+      where: {
+        email: userDetails.email,
+        projectId: projectDetails.id,
+        access: true
+      }
+    });
+    if(!permissionExist) {
+      await db.permissions.create({
+        data: {
+          email: userDetails.email,
+          projectId: projectDetails.id,
+          access: true,
+        }
+      });
+    }
+
+    return projectDetails;
 
   } catch (error) {
     console.log(error);
