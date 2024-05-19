@@ -3,9 +3,9 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { db } from "./db";
 import { redirect } from "next/navigation";
-import { Agency, Project, User } from "@prisma/client";
+import { Agency, Prisma, Project, User } from "@prisma/client";
 import { Omit } from "@prisma/client/runtime/library";
-import { access } from "fs";
+import { v4 } from "uuid";
 
 export const createTeamUser = async (user: User) => {
   if (user.role === "AGENCY_OWNER") return null;
@@ -190,4 +190,30 @@ export const upsertProject = async (project: Omit<Project, "agencyId">) => {
   } catch (error) {
     console.log(error);
   }
+}
+
+export const upsertLane = async (lane: Prisma.LaneUncheckedCreateInput) => {
+  let order: number;
+
+  if (!lane.order) {
+    const lanes = await db.lane.findMany({
+      where: {
+        projectId: lane.projectId
+      },
+    });
+    order = lanes.length;
+  } else {
+    order = lane.order;
+  }
+
+  const response = await db.lane.upsert({
+    where: { id: lane.id || v4() },
+    update: lane,
+    create: {
+      ...lane,
+      order,
+    },
+  });
+
+  return response;
 }
