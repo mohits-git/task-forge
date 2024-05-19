@@ -18,7 +18,7 @@ export default async function Home() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-24">
+    <main className="flex min-h-screen flex-col items-center justify-center">
       <div className="max-w-xl">
         <AgencyDetails />
       </div>

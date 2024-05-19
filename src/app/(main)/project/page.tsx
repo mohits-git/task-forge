@@ -18,11 +18,9 @@ const Page: React.FC = async () => {
 
   if (user.role === "AGENCY_OWNER") {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center gap-4 p-24">
-        <div className="max-w-xl">
-          <ProjectDetails />
-        </div>
-      </main>
+      <div className="max-w-xl">
+        <ProjectDetails />
+      </div>
     );
   }
 

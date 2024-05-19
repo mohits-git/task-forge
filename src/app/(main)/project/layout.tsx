@@ -5,11 +5,11 @@ type Props = {
 }
 
 const Layout: React.FC<Props> = ({ children }) => {
-    return (
-        <main>
-            {children}
-        </main>
-    )
+  return (
+    <main className="flex min-h-screen flex-col items-center justify-center">
+      {children}
+    </main>
+  )
 }
 
 export default Layout
