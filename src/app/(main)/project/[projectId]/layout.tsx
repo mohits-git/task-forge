@@ -1,4 +1,5 @@
 import Infobar from "@/components/global/infobar";
+import Sidebar from "@/components/global/sidebar";
 import Unauthorized from "@/components/global/unauthorized";
 import { getAuthUserDetails, verifyUserAndInvitation } from "@/lib/queries";
 import { currentUser } from "@clerk/nextjs/server";
@@ -31,8 +32,13 @@ const Layout: React.FC<Props> = async ({ children, params }) => {
 
   return (
     <div className="h-screen overflow-hidden">
+      <Sidebar
+        user={userDetails}
+        projectId={params.projectId}
+        agencyId={agencyId}
+      />
       <div className="md:pl-[300px]">
-        <Infobar 
+        <Infobar
           projectName={project?.name}
           agencyName={userDetails.Agency?.name}
         />
