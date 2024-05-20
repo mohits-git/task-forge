@@ -42,9 +42,9 @@ const Layout: React.FC<Props> = async ({ children, params }) => {
           projectName={project?.name}
           agencyName={userDetails.Agency?.name}
         />
-      </div>
-      <div className="relative">
-        {children}
+        <div className="relative">
+          {children}
+        </div>
       </div>
     </div>
   )
