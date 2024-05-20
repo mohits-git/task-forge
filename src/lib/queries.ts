@@ -3,7 +3,7 @@
 import { clerkClient, currentUser } from "@clerk/nextjs/server";
 import { db } from "./db";
 import { redirect } from "next/navigation";
-import { Agency, Prisma, Project, User } from "@prisma/client";
+import { Agency, Lane, Prisma, Project, Ticket, User } from "@prisma/client";
 import { Omit } from "@prisma/client/runtime/library";
 import { v4 } from "uuid";
 
@@ -215,5 +215,116 @@ export const upsertLane = async (lane: Prisma.LaneUncheckedCreateInput) => {
     },
   });
 
+  return response;
+}
+
+export const getProjectDetails = async (projectId: string) => {
+  const response = await db.project.findUnique({
+    where: { id: projectId },
+  });
+  return response;
+}
+
+export const getLanesWithTicket = async (projectId: string) => {
+  const response = await db.lane.findMany({
+    where: {
+      projectId,
+    },
+    orderBy: { order: "asc" },
+    include: {
+      Tickets: {
+        orderBy: { order: 'asc' },
+        include: {
+          Assigned: true,
+        },
+      },
+    }
+  });
+
+  return response;
+}
+
+export const updateLanesOrder = async (lanes: Lane[]) => {
+  try {
+    const updateTransactions = lanes.map((lane) => {
+      return db.lane.update({
+        where: { id: lane.id },
+        data: { order: lane.order },
+      });
+    });
+
+    await db.$transaction(updateTransactions);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const updateTicketsOrder = async (tickets: Ticket[]) => {
+  try {
+    const updateTransactions = tickets.map((ticket) => {
+      return db.ticket.update({
+        where: { id: ticket.id },
+        data: { order: ticket.order, laneId: ticket.laneId },
+      });
+    });
+    await db.$transaction(updateTransactions);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+export const deleteTicket = async (ticketId: string) => {
+  const response = await db.ticket.delete({
+    where: { id: ticketId },
+  });
+  return response;
+}
+
+export const getProjectTeamMembers = async (projectId: string) => {
+  const response = await db.user.findMany({
+    where: {
+      role: "TEAM_MEMBER",
+      Permissions: {
+        some: {
+          projectId: projectId,
+          access: true,
+        }
+      }
+    }
+  });
+
+  return response;
+}
+
+export const upsertTicket = async (
+  ticket: Prisma.TicketUncheckedCreateInput,
+) => {
+  let order: number;
+  if (!ticket.order) {
+    const tickets = await db.ticket.findMany({
+      where: { laneId: ticket.laneId },
+    });
+    order = tickets.length;
+  } else {
+    order = ticket.order;
+  }
+
+  const response = await db.ticket.upsert({
+    where: { id: ticket.id || v4() },
+    update: { ...ticket },
+    create: { ...ticket, order },
+    include: {
+      Assigned: true,
+      Lane: true,
+    },
+  });
+
+  return response;
+}
+
+export const deleteLane = async (laneId: string) => {
+  const response = await db.lane.delete({
+    where: { id: laneId },
+  });
   return response;
 }
