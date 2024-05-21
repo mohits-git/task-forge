@@ -72,7 +72,7 @@ const ProjectView: React.FC<Props> = ({ projectId, project, lanes }) => {
   useEffect(() => {
     const lane = document.getElementById(`${hash}`);
     if (lane) {
-      lane.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start", });
+      lane.scrollIntoView({ behavior: "smooth", block: "center", inline: "start", });
     }
   }, [hash]);
 
@@ -334,7 +334,6 @@ const ProjectView: React.FC<Props> = ({ projectId, project, lanes }) => {
     }
   }
 
-
   return (
     <DndContext
       sensors={sensors}
@@ -342,6 +341,7 @@ const ProjectView: React.FC<Props> = ({ projectId, project, lanes }) => {
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       onDragOver={onDragOver}
+      autoScroll={{ acceleration: 100 }}
     >
       <div className="bg-white/60 dark:bg-background/60 rounded-xl p-4 use-automation-zoom-in">
         <SortableContext
@@ -349,7 +349,9 @@ const ProjectView: React.FC<Props> = ({ projectId, project, lanes }) => {
           items={allLanes}
           strategy={horizontalListSortingStrategy}
         >
-          <div className="flex mt-4 overflow-scroll scrollbar gap-4 relative">
+          <div
+            className="flex mt-4 h-[calc(100vh-86px)] overflow-x-scroll scrollbar gap-4 relative cursor-grab"
+          >
             {allLanes.map((lane) => (
               <div
                 key={lane.id.toString()}

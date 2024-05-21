@@ -24,14 +24,15 @@ import {
 import { deleteLane } from '@/lib/queries'
 import { LaneDetail, TicketWithAssigned } from '@/lib/types'
 import { useModal } from '@/providers/modal-provider'
-import { Edit, MoreVertical, PlusCircleIcon, Trash } from 'lucide-react'
+import { Edit, MoreVertical, PlusCircleIcon, PlusIcon, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { Dispatch, SetStateAction, useMemo } from 'react'
+import React, { Dispatch, MouseEvent as MouseEventHandler, SetStateAction, useMemo } from 'react'
 import CustomModal from '@/components/global/custom-modal'
 import TicketForm from '@/components/forms/ticket-form'
 import ProjectTicket from './project-ticket'
 import { SortableContext, useSortable, verticalListSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { Button } from '@/components/ui/button'
 
 interface PipelaneLaneProps {
   setAllTickets: Dispatch<SetStateAction<TicketWithAssigned[]>>;
@@ -116,14 +117,14 @@ const ProjectLane: React.FC<PipelaneLaneProps> = ({
   return (
     <div
       ref={setNodeRef}
-      className="h-full border-[0.5px] rounded-lg"
+      className="border-[0.5px] rounded-lg"
       style={style}
     >
       <AlertDialog>
         <DropdownMenu>
-          <div className="bg-slate-200/30 dark:bg-background/20 h-[700px] w-[300px] px-4 relative rounded-lg overflow-visible flex-shrink-0">
+          <div className="bg-slate-200/30 dark:bg-background/20 min-h-[200px] w-[300px] px-4 relative rounded-lg overflow-visible flex-shrink-0">
             <div
-              className="h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-200/60 absolute top-0 left-0 right-0 z-10"
+              className="rounded-xl h-14 backdrop-blur-lg dark:bg-background/40 bg-slate-200/60 absolute top-0 left-0 right-0 z-10"
               {...attributes}
               {...listeners}
             >
@@ -144,7 +145,17 @@ const ProjectLane: React.FC<PipelaneLaneProps> = ({
               </div>
             </div>
 
-            <div className=" max-h-[700px] overflow-scroll invisible-scrollbar pt-12">
+            <div className="max-h-[calc(100vh-106px)] overflow-scroll invisible-scrollbar pt-12">
+              <div className="mt-5 flex items-center justify-center w-[250px] mx-auto">
+                <Button
+                  className="w-full flex gap-2"
+                  onClick={handleCreateTicket}
+                  variant={'outline'}
+                >
+                  Add Ticket
+                  <PlusIcon size={15} />
+                </Button>
+              </div>
               <SortableContext
                 id={laneDetails.id.toString()}
                 items={tickets}
