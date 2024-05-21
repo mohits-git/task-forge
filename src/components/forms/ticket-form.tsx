@@ -229,7 +229,7 @@ const TicketForm: React.FC<Props> = ({ getNewTicket, laneId, projectId }) => {
               disabled={isLoading}
               type="submit"
             >
-              {form.formState.isSubmitting ? <Loading /> : 'Save'}
+              {form.formState.isSubmitting ? <Loading variant="small" /> : 'Save'}
             </Button>
           </form>
         </Form>

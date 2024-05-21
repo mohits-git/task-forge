@@ -118,7 +118,7 @@ const LaneDetails: React.FC<CreateLaneDetailsProps> = ({
               disabled={isLoading}
               type="submit"
             >
-              {form.formState.isSubmitting ? <Loading /> : 'Save'}
+              {form.formState.isSubmitting ? <Loading variant='small' /> : 'Save'}
             </Button>
           </form>
         </Form>

@@ -149,9 +149,13 @@ export default function SidebarContent({
                     {currentProject?.Lane?.map((lane) => {
                       return (
                         <CommandItem key={lane.id} className="w-full md:w-[250px] aria-selected:!bg-transparent !py-0">
-                          <Link href={"#"} className="h-full p-1.5 hover:bg-primary-foreground flex items-center gap-2 rounded-md transition-all md:w-full w-[250px]">
+                          <p
+                            onClick={() => {
+                              window.location.hash = `#${lane.id.toString()}`;
+                            }}
+                            className="h-full p-1.5 hover:bg-primary-foreground flex items-center gap-2 rounded-md transition-all md:w-full w-[250px]">
                             <span>{lane.name}</span>
-                          </Link>
+                          </p>
                         </CommandItem>
                       )
                     })}

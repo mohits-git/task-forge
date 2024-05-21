@@ -76,6 +76,9 @@
   }
 }
 
+.scrollbar {
+  scroll-behavior: smooth;
+}
 
 .scrollbar::-webkit-scrollbar {
   height: 8px;

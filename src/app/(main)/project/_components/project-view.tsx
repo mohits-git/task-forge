@@ -6,7 +6,6 @@ import {
   LaneDetail,
   TicketWithAssigned,
 } from "@/lib/types";
-import { useModal } from "@/providers/modal-provider";
 import { Project } from "@prisma/client";
 import { Flag, Plus } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -38,7 +37,6 @@ type Props = {
 }
 
 const ProjectView: React.FC<Props> = ({ projectId, project, lanes }) => {
-  const { setOpen } = useModal();
   const router = useRouter();
   const [allLanes, setAllLanes] = useState<LaneDetail[]>([]);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -46,7 +44,6 @@ const ProjectView: React.FC<Props> = ({ projectId, project, lanes }) => {
 
   const detectSensor = () => {
     const isWebEntry = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-    console.log("isWebEntry: ", isWebEntry);
     return !isWebEntry ? PointerSensor : TouchSensor;
   }
   const sensors = useSensors(
@@ -60,6 +57,24 @@ const ProjectView: React.FC<Props> = ({ projectId, project, lanes }) => {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  const [hash, setHash] = useState(window.location.hash.substring(1));
+
+  useEffect(() => {
+    const onHashChange = () => {
+      setHash(window.location.hash.substring(1));
+    }
+    window.onhashchange = onHashChange;
+    window.addEventListener('hashchange', onHashChange);
+    return () => window.removeEventListener('hashchange', onHashChange);
+  }, []);
+
+  useEffect(() => {
+    const lane = document.getElementById(`${hash}`);
+    if (lane) {
+      lane.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "start", });
+    }
+  }, [hash]);
 
   useEffect(() => {
     setAllLanes(lanes);
@@ -336,14 +351,18 @@ const ProjectView: React.FC<Props> = ({ projectId, project, lanes }) => {
         >
           <div className="flex mt-4 overflow-scroll scrollbar gap-4 relative">
             {allLanes.map((lane) => (
-              <ProjectLane
-                allTickets={allTickets}
-                setAllTickets={setAllTickets}
-                projectId={projectId}
-                tickets={lane.Tickets}
-                laneDetails={lane}
+              <div
                 key={lane.id.toString()}
-              />
+                id={lane.id.toString()}
+              >
+                <ProjectLane
+                  allTickets={allTickets}
+                  setAllTickets={setAllTickets}
+                  projectId={projectId}
+                  tickets={lane.Tickets}
+                  laneDetails={lane}
+                />
+              </div>
             ))}
             <DragOverlay dropAnimation={null}>
               {activeId && (

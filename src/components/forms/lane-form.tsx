@@ -85,7 +85,7 @@ const LaneForm: React.FC<CreateLaneFormProps> = ({
   return (
     <Card className="w-full ">
       <CardHeader>
-        <CardTitle>Lane Details</CardTitle>
+        <CardTitle>List Details</CardTitle>
       </CardHeader>
       <CardContent>
         <Form {...form}>
@@ -99,10 +99,10 @@ const LaneForm: React.FC<CreateLaneFormProps> = ({
               name="name"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Lane Name</FormLabel>
+                  <FormLabel>List Name</FormLabel>
                   <FormControl>
                     <Input
-                      placeholder="Lane Name"
+                      placeholder="List Name"
                       {...field}
                     />
                   </FormControl>
@@ -116,7 +116,7 @@ const LaneForm: React.FC<CreateLaneFormProps> = ({
               disabled={isLoading}
               type="submit"
             >
-              {form.formState.isSubmitting ? <Loading /> : 'Save'}
+              {form.formState.isSubmitting ? <Loading variant='small' /> : 'Save'}
             </Button>
           </form>
         </Form>

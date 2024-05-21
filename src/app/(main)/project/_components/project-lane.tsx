@@ -164,7 +164,7 @@ const ProjectLane: React.FC<PipelaneLaneProps> = ({
 
                   {tickets.length === 0 && (
                     <div className="text-sm text-center text-muted-foreground">
-                      No tickets in this lane
+                      No tickets in this list
                     </div>
                   )}
                 </div>
