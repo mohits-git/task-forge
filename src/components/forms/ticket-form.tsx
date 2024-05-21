@@ -38,7 +38,7 @@ const TicketFormSchema = z.object({
   value: z.string().refine((value) => currencyNumberRegex.test(value), {
     message: 'Value must be valid price.'
   })
-}) 
+})
 
 const TicketForm: React.FC<Props> = ({ getNewTicket, laneId, projectId }) => {
   const { data: defaultData, setClose } = useModal();
@@ -62,12 +62,23 @@ const TicketForm: React.FC<Props> = ({ getNewTicket, laneId, projectId }) => {
     if (!laneId) return;
 
     try {
-      const response = await upsertTicket({
-        ...values,
-        laneId,
-        id: defaultData.ticket?.id,
-        assignedUserId: assignedTo,
-      });
+      let payload;
+      if (assignedTo === "") {
+        payload = {
+          ...values,
+          laneId,
+          id: defaultData.ticket?.id,
+        };
+      } else {
+        payload = {
+          ...values,
+          laneId,
+          id: defaultData.ticket?.id,
+          assignedUserId: assignedTo,
+        };
+      }
+
+      const response = await upsertTicket(payload);
 
       toast('Success', {
         description: 'Ticket saved successfully'
