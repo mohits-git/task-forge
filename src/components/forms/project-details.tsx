@@ -2,7 +2,7 @@
 
 import * as z from "zod";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Agency } from "@prisma/client";
+import { Project } from "@prisma/client";
 import { useForm } from "react-hook-form";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -43,7 +43,7 @@ import { v4 } from "uuid";
 import { toast } from "sonner"
 
 type Props = {
-  data?: Partial<Agency>
+  data?: Partial<Project>
 }
 
 const FormSchema = z.object({

@@ -6,18 +6,13 @@ import { twMerge } from "tailwind-merge";
 import CustomModal from "@/components/global/custom-modal";
 import ProjectDetails from "@/components/forms/project-details";
 import { PlusCircleIcon } from "lucide-react";
-import { AuthUserDetails } from "@/lib/types";
 
 type Props = {
-  user: AuthUserDetails;
-  id: string
   className: string
 }
 
-const CreateProjectButton: React.FC<Props> = ({ className, user }) => {
+const CreateProjectButton: React.FC<Props> = ({ className }) => {
   const { setOpen } = useModal();
-  const agencyDetails = user?.Agency;
-  if (!agencyDetails) return;
   return (
     <div>
       <Button className={twMerge('w-full gap-4 flex', className)}
@@ -27,9 +22,7 @@ const CreateProjectButton: React.FC<Props> = ({ className, user }) => {
               title="Create a subaccount"
               subheading="You can switch between subaccounts"
             >
-              <ProjectDetails
-                data={agencyDetails}
-              />
+              <ProjectDetails />
             </CustomModal>
           )
         }}
