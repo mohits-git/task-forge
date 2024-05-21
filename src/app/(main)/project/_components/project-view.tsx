@@ -2,9 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import { updateLanesOrder, updateTicketsOrder } from "@/lib/queries";
-import LaneDetails from "@/components/forms/lane-details";
-import CustomModal from "@/components/global/custom-modal";
-import { Button } from "@/components/ui/button";
 import {
   LaneDetail,
   TicketWithAssigned,
@@ -75,17 +72,6 @@ const ProjectView: React.FC<Props> = ({ projectId, project, lanes }) => {
   });
 
   const [allTickets, setAllTickets] = useState(ticketsFromAllLanes);
-
-  const handleAddLane = () => {
-    setOpen(
-      <CustomModal
-        title="Create List"
-        subheading="Lists allow you to group your tickets together."
-      >
-        <LaneDetails projectId={projectId} />
-      </CustomModal>
-    )
-  }
 
   const onDragStart = (event: DragStartEvent) => {
     const { active } = event;
@@ -343,24 +329,12 @@ const ProjectView: React.FC<Props> = ({ projectId, project, lanes }) => {
       onDragOver={onDragOver}
     >
       <div className="bg-white/60 dark:bg-background/60 rounded-xl p-4 use-automation-zoom-in">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl">
-            {project?.name}
-          </h1>
-          <Button
-            className="flex items-center gap-4"
-            onClick={handleAddLane}
-          >
-            <Plus size={15} />
-            Create Lane
-          </Button>
-        </div>
         <SortableContext
           id="lanes"
           items={allLanes}
           strategy={horizontalListSortingStrategy}
         >
-          <div className="flex mt-4 overflow-scroll scroll-bar gap-4 relative">
+          <div className="flex mt-4 overflow-scroll scrollbar gap-4 relative">
             {allLanes.map((lane) => (
               <ProjectLane
                 allTickets={allTickets}

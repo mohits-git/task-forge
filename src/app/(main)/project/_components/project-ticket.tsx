@@ -117,7 +117,7 @@ const ProjectTicket: React.FC<Props> = ({
       <AlertDialog>
         <DropdownMenu>
           <Card
-            className="my-4 dark:bg-slate-900 bg-white shadow-none transition-all"
+            className="my-4 dark:bg-slate-900 bg-white cursor-grab shadow-none transition-all"
             {...attributes}
             {...listeners}
           >

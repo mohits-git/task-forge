@@ -20,10 +20,7 @@ const ProjectPage: React.FC<Props> = async ({ params }) => {
   )) as LaneDetail[];
 
   return (
-    <div
-      className="h-screen overflow-scroll scrollbar backdrop-blur-[35px] dark:bg-muted/40 bg-muted/60 dark:shadow-2xl dark:shadow-black mx-auto pt-6 p-4 absolute top-0 right-0 left-0 bottom-0 z-[11]"
-    >
-
+    <div className="relative">
       <ProjectView
         lanes={lanes}
         projectId={params.projectId}

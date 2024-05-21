@@ -116,7 +116,7 @@ const ProjectLane: React.FC<PipelaneLaneProps> = ({
   return (
     <div
       ref={setNodeRef}
-      className="h-full"
+      className="h-full border-[0.5px] rounded-lg"
       style={style}
     >
       <AlertDialog>
