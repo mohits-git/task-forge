@@ -16,6 +16,7 @@ import {
 import { Switch } from "../ui/switch";
 import { v4 } from "uuid";
 import Unauthorized from "../global/unauthorized";
+import Loading from "../global/loading";
 
 type Props = {
   projects?: Project[]
@@ -31,10 +32,16 @@ export default function UserPermissions({ projects }: Props) {
   useEffect(() => {
     if (data.user) {
       const fetchDetails = async () => {
-        const response = await getAuthUserDetails();
-        if (response) {
-          setAuthUserData(response);
+        setLoadingPermissions(true);
+        try {
+          const response = await getAuthUserDetails();
+          if (response) {
+            setAuthUserData(response);
+          }
+        } catch (error) {
+          toast("Something went wrong");
         }
+        setLoadingPermissions(false);
       }
       fetchDetails();
     }
@@ -43,9 +50,15 @@ export default function UserPermissions({ projects }: Props) {
   useEffect(() => {
     if (!data.user) { return }
     const getPermissions = async () => {
-      if (!data.user) return;
-      const permission = await getUserPermissions(data.user.id);
-      setProjectPermissions(permission);
+      setLoadingPermissions(true);
+      try {
+        if (!data.user) return;
+        const permission = await getUserPermissions(data.user.id);
+        setProjectPermissions(permission);
+      } catch (error) {
+        toast("Something went wrong");
+      }
+      setLoadingPermissions(false);
     }
     getPermissions();
   }, [data])
@@ -89,7 +102,14 @@ export default function UserPermissions({ projects }: Props) {
     setLoadingPermissions(false);
   }
 
-  if (authUserData?.role !== "AGENCY_OWNER") return <Unauthorized />;
+  if (authUserData?.role !== "AGENCY_OWNER") {
+    if (loadingPermissions) return (
+      <div className="flex items-center justify-center h-full w-full">
+        <Loading />
+      </div>
+    );
+    return <Unauthorized />;
+  }
 
   return (
     <Card className="w-full">
