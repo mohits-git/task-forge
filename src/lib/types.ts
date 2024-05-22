@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { Lane, Prisma, Ticket, User } from "@prisma/client";
-import { getAuthUserDetails, getLanesWithTicket } from "./queries";
+import { getAuthUserDetails, getLanesWithTicket, getUserPermissions } from "./queries";
 
 export const _getTicketsWithLaneAndUser = async (laneId: string) => {
   const response = await db.ticket.findMany({
@@ -38,3 +38,17 @@ export type TicketWithAssigned = Ticket & {
 export type LaneDetail = Lane & {
   Tickets: TicketWithAssigned[]
 };
+
+const _getUserWithPermissionsAndProjects = async (agencyId: string) => {
+  return await db.user.findFirst({
+    where: { Agency: { id: agencyId } },
+    include: {
+      Agency: { include: { Projects: true } },
+      Permissions: { include: { Project: true } },
+    },
+  });
+}
+
+export type UserDetailsWithPermissionsAndProjects = Prisma.PromiseReturnType<typeof _getUserWithPermissionsAndProjects>;
+
+export type UserPermissionsDetails = Prisma.PromiseReturnType<typeof getUserPermissions>;

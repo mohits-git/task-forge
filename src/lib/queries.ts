@@ -120,7 +120,7 @@ export const initUser = async (newUser: Partial<User>) => {
 
 export const upsertAgency = async (agency: Agency) => {
   const user = await currentUser();
-  if(!user) return null;
+  if (!user) return null;
   try {
     const agencyDetails = await db.agency.upsert({
       where: {
@@ -144,19 +144,19 @@ export const upsertAgency = async (agency: Agency) => {
 
 export const deleteProject = async (projectId: string) => {
   const user = await currentUser();
-  if(user?.privateMetadata.role !== "AGENCY_OWNER") return null;
-  const response = await db.project.delete({ where: { id: projectId }});
+  if (user?.privateMetadata.role !== "AGENCY_OWNER") return null;
+  const response = await db.project.delete({ where: { id: projectId } });
   return response;
 }
 
 export const upsertProject = async (project: Omit<Project, "agencyId">) => {
   const user = await currentUser();
-  if(!user) return null;
+  if (!user) return null;
   try {
     const userDetails = await db.user.findUnique({
       where: { id: user.id }
     });
-    if(!userDetails?.agencyId) return null;
+    if (!userDetails?.agencyId) return null;
     const projectDetails = await db.project.upsert({
       where: {
         id: project.id,
@@ -175,7 +175,7 @@ export const upsertProject = async (project: Omit<Project, "agencyId">) => {
         access: true
       }
     });
-    if(!permissionExist) {
+    if (!permissionExist) {
       await db.permissions.create({
         data: {
           email: userDetails.email,
@@ -326,5 +326,87 @@ export const deleteLane = async (laneId: string) => {
   const response = await db.lane.delete({
     where: { id: laneId },
   });
+  return response;
+}
+
+export const getUser = async (id: string) => {
+  const user = await db.user.findUnique({
+    where: {
+      id,
+    },
+  });
+
+  return user;
+}
+
+export const deleteUser = async (userId: string) => {
+  await clerkClient.users.updateUserMetadata(userId, {
+    privateMetadata: {
+      role: undefined,
+    },
+  });
+  const deletedUser = await db.user.delete({ where: { id: userId } })
+
+  return deletedUser;
+}
+
+export const changeUserPermissions = async (
+  permissionId: string | undefined,
+  userEmail: string,
+  projectId: string,
+  permission: boolean
+) => {
+  try {
+    const response = await db.permissions.upsert({
+      where: {
+        id: permissionId
+      },
+      update: { access: permission },
+      create: {
+        access: permission,
+        email: userEmail,
+        projectId,
+      },
+    });
+    return response;
+  } catch (error) {
+    console.log("Could Not Change the permissions", error);
+  }
+}
+
+export const getUserPermissions = async (userId: string) => {
+  const response = await db.user.findUnique({
+    where: { id: userId },
+    include: {
+      Permissions: {
+        include: { Project: true }
+      },
+    },
+  });
+  return response;
+}
+
+export const sendInvitation = async (
+  email: string,
+  agencyId: string
+) => {
+  const response = await db.invitation.create({
+    data: { email, agencyId, role: "TEAM_MEMBER" },
+  });
+
+  try {
+    await clerkClient.invitations.createInvitation({
+      emailAddress: email,
+      redirectUrl: process.env.NEXT_PUBLIC_URL,
+      publicMetadata: {
+        throughInvitation: true,
+        role: "TEAM_MEMBER",
+      },
+    });
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+
   return response;
 }
