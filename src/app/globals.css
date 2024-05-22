@@ -83,17 +83,18 @@
 .scrollbar::-webkit-scrollbar {
   height: 8px;
   width: 8px;
-  background: #000;
+  @apply bg-gray-200 dark:bg-gray-800;
+  -webkit-border-radius: 1ex;
 }
 
 .scrollbar::-webkit-scrollbar-thumb {
-  background: #555;
+  @apply bg-gray-300 dark:bg-gray-700;
   -webkit-border-radius: 1ex;
-  -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.75);
 }
 
 .scrollbar::-webkit-scrollbar-corner {
-  background: #000;
+  @apply bg-gray-200 dark:bg-[#000];
+  -webkit-border-radius: 1ex;
 }
 
 .invisible-scrollbar {

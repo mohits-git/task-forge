@@ -144,7 +144,7 @@ const ProjectTicket: React.FC<Props> = ({
                     alt="contact"
                     src={ticket.Assigned?.avatarUrl}
                   />
-                  <AvatarFallback className="bg-primary text-sm text-white">
+                  <AvatarFallback className="bg-primary dark:bg-secondary text-sm text-white">
                     {ticket.Assigned?.name}
                     {!ticket.assignedUserId && <User2 size={14} />}
                   </AvatarFallback>
