@@ -144,7 +144,7 @@ export const upsertAgency = async (agency: Agency) => {
 
 export const deleteProject = async (projectId: string) => {
   const user = await currentUser();
-  if(user?.privateMetadata.role !== "TEAM_OWNER") return null;
+  if(user?.privateMetadata.role !== "AGENCY_OWNER") return null;
   const response = await db.project.delete({ where: { id: projectId }});
   return response;
 }
