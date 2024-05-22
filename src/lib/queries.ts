@@ -394,19 +394,5 @@ export const sendInvitation = async (
     data: { email, agencyId, role: "TEAM_MEMBER" },
   });
 
-  try {
-    await clerkClient.invitations.createInvitation({
-      emailAddress: email,
-      redirectUrl: process.env.NEXT_PUBLIC_URL,
-      publicMetadata: {
-        throughInvitation: true,
-        role: "TEAM_MEMBER",
-      },
-    });
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-
   return response;
 }
