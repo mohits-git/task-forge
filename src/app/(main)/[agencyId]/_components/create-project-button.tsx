@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { twMerge } from "tailwind-merge";
 import CustomModal from "@/components/global/custom-modal";
 import ProjectDetails from "@/components/forms/project-details";
-import { PlusCircleIcon } from "lucide-react";
+import { PlusIcon } from "lucide-react";
 
 type Props = {
   className: string
@@ -15,7 +15,7 @@ const CreateProjectButton: React.FC<Props> = ({ className }) => {
   const { setOpen } = useModal();
   return (
     <div>
-      <Button className={twMerge('w-full gap-4 flex', className)}
+      <Button className={twMerge('gap-4 flex', className)}
         onClick={() => {
           setOpen(
             <CustomModal
@@ -27,7 +27,7 @@ const CreateProjectButton: React.FC<Props> = ({ className }) => {
           )
         }}
       >
-        <PlusCircleIcon size={15} />
+        <PlusIcon size={15} />
         Create Project
       </Button>
     </div>

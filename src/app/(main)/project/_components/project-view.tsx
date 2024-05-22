@@ -350,7 +350,7 @@ const ProjectView: React.FC<Props> = ({ projectId, project, lanes }) => {
           strategy={horizontalListSortingStrategy}
         >
           <div
-            className="flex mt-4 h-[calc(100vh-86px)] overflow-x-scroll scrollbar gap-4 relative cursor-grab"
+            className="flex mt-4 h-[calc(100vh-86px)] overflow-x-scroll scrollbar gap-4 relative"
           >
             {allLanes.map((lane) => (
               <div
