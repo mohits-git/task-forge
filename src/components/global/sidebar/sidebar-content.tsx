@@ -98,7 +98,7 @@ export default function SidebarContent({
               <PopoverContent className="w-80 h-80 mt-4 z-[200]">
                 <Command className="rounded-lg">
                   <CommandInput placeholder="Search Accounts..." />
-                  <CommandList className="pb-16">
+                  <CommandList className="pb-16 scrollbar">
                     <CommandEmpty>No list found</CommandEmpty>
                     <CommandGroup heading="Projects">
                       {!!projects
