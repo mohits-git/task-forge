@@ -5,7 +5,7 @@ import { AuthUserDetails, ProjectWithLanes } from "@/lib/types";
 import { useEffect, useMemo, useState } from "react"
 import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "../../ui/button";
-import { ChevronsUpDown, Compass, Menu, PlusCircleIcon } from "lucide-react";
+import { ChevronsUpDown, Compass, Menu, PlusCircleIcon, SquareArrowOutUpRight } from "lucide-react";
 import clsx from "clsx";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
@@ -68,6 +68,15 @@ export default function SidebarContent({
           )}
         >
           <div className="relative">
+            {user?.role === "AGENCY_OWNER" && (
+              <Link href={"/"} className="hover:bg-secondary group text-lg font-semibold p-3 rounded-lg flex items-center">
+                <span className="mr-2">Agency Dashboard</span>
+                <SquareArrowOutUpRight
+                  size={18}
+                  className="group-hover:translate-x-0.5 group-hover:-translate-y-0.5 duration-200"
+                />
+              </Link>
+            )}
             <Popover>
               <PopoverTrigger asChild>
                 <Button className="w-full flex items-center justify-between py-8 mt-2" variant={'ghost'}>
