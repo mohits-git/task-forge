@@ -23,6 +23,7 @@ import { Button } from '../ui/button'
 import Loading from '../global/loading'
 import { sendInvitation } from '@/lib/queries'
 import { toast } from 'sonner'
+import { useModal } from '@/providers/modal-provider'
 
 interface SendInvitationProps {
   agencyId: string
@@ -32,6 +33,8 @@ const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId }) => {
   const userDataSchema = z.object({
     email: z.string().email(),
   });
+
+  const { setClose } = useModal();
 
   const form = useForm<z.infer<typeof userDataSchema>>({
     resolver: zodResolver(userDataSchema),
@@ -43,7 +46,8 @@ const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId }) => {
 
   const onSubmit = async (values: z.infer<typeof userDataSchema>) => {
     try {
-      await sendInvitation(values.email, agencyId)
+      const response = await sendInvitation(values.email, agencyId);
+      if(!response) throw new Error("Unauthorized");
       toast('Success', {
         description: 'Created and sent invitation',
       });
@@ -53,6 +57,8 @@ const SendInvitation: React.FC<SendInvitationProps> = ({ agencyId }) => {
         description: 'Could not send invitation',
       })
     }
+
+    setClose();
   }
 
   return (

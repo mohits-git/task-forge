@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { Agency, Lane, Prisma, Project, Ticket, User } from "@prisma/client";
 import { Omit } from "@prisma/client/runtime/library";
 import { v4 } from "uuid";
+import { transporter, mailOptions } from "./nodemailer";
 
 export const createTeamUser = async (user: User) => {
   if (user.role === "AGENCY_OWNER") return null;
@@ -390,9 +391,24 @@ export const sendInvitation = async (
   email: string,
   agencyId: string
 ) => {
+  const user = await getAuthUserDetails();
+  if(!user || user.role !== "AGENCY_OWNER") return null;
   const response = await db.invitation.create({
     data: { email, agencyId, role: "TEAM_MEMBER" },
   });
+
+  const result = await transporter.sendMail({
+      ...mailOptions, 
+      to: email,
+      subject: `${user.Agency?.name} Invitation Email - TaskForge`,
+      html: `<h1>Invitation Mail to join ${user.Agency?.name} as a Team Member on TaskForge</h1>
+      <p>${user.name} has invited you to join their Agency - ${user.Agency?.name}.</p>
+      <p>To accept the invitation just login with this email on our website - <a href="${process.env.WEBSITE_URL}">${process.env.WEBSITE_URL}</a></p>
+      <p>Or you can reject the invitation by clicking to this link - <a href="${process.env.WEBSITE_URL}/reject-invitation?token=${response.id}">${process.env.WEBSITE_URL}/reject-invitation?token=${response.id}</a></p>
+      `
+  });
+
+  if(!result) return null;
 
   return response;
 }
