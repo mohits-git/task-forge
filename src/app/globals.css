@@ -83,7 +83,7 @@
 .scrollbar::-webkit-scrollbar {
   height: 8px;
   width: 8px;
-  @apply bg-gray-200 dark:bg-gray-800;
+  @apply bg-transparent;
   -webkit-border-radius: 1ex;
 }
 
@@ -93,7 +93,7 @@
 }
 
 .scrollbar::-webkit-scrollbar-corner {
-  @apply bg-gray-200 dark:bg-[#000];
+  @apply bg-transparent;
   -webkit-border-radius: 1ex;
 }
 

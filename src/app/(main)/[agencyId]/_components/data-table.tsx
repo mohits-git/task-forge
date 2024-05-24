@@ -22,6 +22,7 @@ import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import CustomModal from "@/components/global/custom-modal";
+import { Separator } from "@/components/ui/separator";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -48,40 +49,40 @@ export default function DataTable<TData, TValue>({
   });
 
   return (
-    <>
+    <div className="mt-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-semibold">Team Members:</h2>
-        <div className="flex items-center gap-3">
-          <div className="flex items-center py-4 gap-2">
-            <Search />
-            <Input placeholder="Search Name..."
-              value={(table.getColumn(filterValue)?.getFilterValue() as string) ?? ''}
-              onChange={(e) => {
-                table.getColumn(filterValue)?.setFilterValue(e.target.value);
-              }}
-              className="h-12"
-            />
-          </div>
-          <Button
-            onClick={() => {
-              if (modalChildren) {
-                setOpen(
-                  <CustomModal
-                    title="Add a New Team Member"
-                    subheading="Send an invitation."
-                  >
-                    {modalChildren}
-                  </CustomModal>
-                )
-              }
-            }}
-            className="flex items-center gap-2 px-4 py-2 rounded-md"
-          >
-            {actionButtonText}
-          </Button>
-        </div>
+        <Button
+          onClick={() => {
+            if (modalChildren) {
+              setOpen(
+                <CustomModal
+                  title="Add a New Team Member"
+                  subheading="Send an invitation."
+                >
+                  {modalChildren}
+                </CustomModal>
+              )
+            }
+          }}
+          className="flex items-center gap-2 px-4 py-2 rounded-md"
+        >
+          {actionButtonText}
+        </Button>
       </div>
 
+      <div className="flex items-center mt-6 mb-1 gap-2">
+        <Search className="text-muted-foreground/80" size={15} />
+        <Input placeholder="Search Name..."
+          value={(table.getColumn(filterValue)?.getFilterValue() as string) ?? ''}
+          onChange={(e) => {
+            table.getColumn(filterValue)?.setFilterValue(e.target.value);
+          }}
+          className="placeholder:text-muted-foreground/90 border-none focus:outline-0 outline-0 focus:border-none focus-visible:ring-0"
+        />
+      </div>
+      <Separator />
+      <p className="text-muted-foreground text-[0.80rem] py-3">Team</p>
       <div className="border bg-background rounded-lg">
         <Table>
           <TableHeader>
@@ -119,6 +120,6 @@ export default function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-    </>
+    </div>
   )
 }
