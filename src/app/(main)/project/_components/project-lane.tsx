@@ -24,9 +24,9 @@ import {
 import { deleteLane } from '@/lib/queries'
 import { LaneDetail, TicketWithAssigned } from '@/lib/types'
 import { useModal } from '@/providers/modal-provider'
-import { Edit, MoreVertical, PlusCircleIcon, PlusIcon, Trash } from 'lucide-react'
+import { ChevronDown, ChevronRight, Edit, MoreVertical, PlusCircleIcon, PlusIcon, Trash } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import React, { Dispatch, MouseEvent as MouseEventHandler, SetStateAction, useMemo } from 'react'
+import React, { Dispatch, MouseEvent as MouseEventHandler, SetStateAction, useMemo, useState } from 'react'
 import CustomModal from '@/components/global/custom-modal'
 import TicketForm from '@/components/forms/ticket-form'
 import ProjectTicket from './project-ticket'
@@ -51,6 +51,7 @@ const ProjectLane: React.FC<PipelaneLaneProps> = ({
 }) => {
   const { setOpen } = useModal()
   const router = useRouter()
+  const [showCompleted, setShowCompleted] = useState(false);
 
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({
     id: laneDetails.id.toString(),
@@ -162,8 +163,13 @@ const ProjectLane: React.FC<PipelaneLaneProps> = ({
                 strategy={verticalListSortingStrategy}
               >
                 <div className='mt-5'>
+                  {tickets.length === 0 && (
+                    <div className="text-sm text-center text-muted-foreground">
+                      No tickets in this list
+                    </div>
+                  )}
                   {tickets.map((ticket) => (
-                    (ticket && ticket.id) &&
+                    (ticket && ticket.id && !ticket.completed) &&
                     <ProjectTicket
                       allTickets={allTickets}
                       setAllTickets={setAllTickets}
@@ -172,12 +178,42 @@ const ProjectLane: React.FC<PipelaneLaneProps> = ({
                       key={ticket.id.toString()}
                     />
                   ))}
-
-                  {tickets.length === 0 && (
-                    <div className="text-sm text-center text-muted-foreground">
-                      No tickets in this list
-                    </div>
+                  {tickets.length !== 0 && (
+                    <button
+                      className='w-full py-2.5 flex space-x-2 items-center'
+                      onClick={() => setShowCompleted(prev => !prev)}
+                    >
+                      {showCompleted && (
+                        <span
+                          className='rounded-full p-2.5 bg-transparent hover:bg-primary-foreground'
+                        >
+                          <ChevronDown
+                            size={15}
+                          />
+                        </span>
+                      )}
+                      {!showCompleted && (
+                        <span
+                          className='rounded-full p-2.5 bg-transparent hover:bg-primary-foreground'
+                        >
+                          <ChevronRight
+                            size={15}
+                          />
+                        </span>
+                      )}
+                      <span>Completed Tickets</span>
+                    </button>
                   )}
+                  {showCompleted && tickets.map((ticket) => (
+                    (ticket && ticket.id && ticket.completed) &&
+                    <ProjectTicket
+                      allTickets={allTickets}
+                      setAllTickets={setAllTickets}
+                      projectId={projectId}
+                      ticket={ticket}
+                      key={ticket.id.toString()}
+                    />
+                  ))}
                 </div>
               </SortableContext>
             </div>

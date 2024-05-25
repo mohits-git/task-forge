@@ -29,10 +29,10 @@ import {
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
-import { deleteTicket } from "@/lib/queries";
+import { deleteTicket, toggleComplete } from "@/lib/queries";
 import { useModal } from "@/providers/modal-provider";
 import { useSortable } from "@dnd-kit/sortable";
-import { Edit, MoreHorizontalIcon, Trash, User2 } from "lucide-react";
+import { Check, Edit, MoreHorizontalIcon, Trash, User2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { Dispatch, SetStateAction } from "react";
 import { TicketWithAssigned } from "@/lib/types";
@@ -72,6 +72,18 @@ const ProjectTicket: React.FC<Props> = ({
         return t
       })
     )
+  }
+
+  const handleToggleComplete = async () => {
+    try {
+      const response = await toggleComplete(ticket.id, !ticket.completed);
+      router.refresh();
+    } catch (error) {
+      toast('Oppse!', {
+        description: 'Could not save the ticket.',
+      })
+      console.log(error)
+    }
   }
 
   const handleClickEdit = async () => {
@@ -174,6 +186,13 @@ const ProjectTicket: React.FC<Props> = ({
           <DropdownMenuContent>
             <DropdownMenuLabel>Options</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem
+              className="flex items-center gap-2"
+              onClick={handleToggleComplete}
+            >
+              <Check size={15} />
+              {ticket.completed ? "Mark Incomplete" : "Mark as completed"}
+            </DropdownMenuItem>
             <AlertDialogTrigger>
               <DropdownMenuItem className="flex items-center gap-2">
                 <Trash size={15} />
