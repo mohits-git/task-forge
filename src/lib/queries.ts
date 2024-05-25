@@ -412,3 +412,11 @@ export const sendInvitation = async (
 
   return response;
 }
+
+export const toggleComplete = async (ticketId: string, value: boolean) => {
+  const response = await db.ticket.update({
+    where: { id: ticketId },
+    data: { completed: value }
+  });
+  return response;
+}
