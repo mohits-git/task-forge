@@ -37,12 +37,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <ModalProvider>
-            <Toaster />
-            <ClerkProvider appearance={{ baseTheme: dark }}>
+          <ClerkProvider appearance={{ baseTheme: dark }}>
+            <ModalProvider>
+              <Toaster />
               {children}
-            </ClerkProvider>
-          </ModalProvider>
+            </ModalProvider>
+          </ClerkProvider>
         </ThemeProvider>
       </body>
     </html>
