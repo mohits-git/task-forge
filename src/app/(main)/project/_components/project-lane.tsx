@@ -180,7 +180,7 @@ const ProjectLane: React.FC<PipelaneLaneProps> = ({
                   ))}
                   {tickets.length !== 0 && (
                     <button
-                      className='w-full py-2.5 flex space-x-2 items-center'
+                      className='w-full py-1 flex space-x-1 items-center'
                       onClick={() => setShowCompleted(prev => !prev)}
                     >
                       {showCompleted && (
@@ -201,7 +201,7 @@ const ProjectLane: React.FC<PipelaneLaneProps> = ({
                           />
                         </span>
                       )}
-                      <span>Completed Tickets</span>
+                      <span className='text-sm'>Completed Tickets</span>
                     </button>
                   )}
                   {showCompleted && tickets.map((ticket) => (
